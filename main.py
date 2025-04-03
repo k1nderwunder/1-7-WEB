@@ -1,23 +1,22 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from models import User
+from typing import List
 
 app = FastAPI()
 
-@app.post("/user")
-def check_user_age(user: User):
-    is_adult = user.age >= 18
-    return {
-        "name": user.name,
-        "age": user.age,
-        "is_adult": is_adult
-    }
+class Feedback(BaseModel):
+    name: str
+    message: str
 
-class Numbers(BaseModel):
-    num1: float
-    num2: float
+feedback_storage: List[Feedback] = []
 
-@app.post("/calculate")
-def calculate(numbers: Numbers):
-    result = numbers.num1 + numbers.num2
-    return {"result": result}
+@app.post("/feedback")
+async def post_feedback(feedback: Feedback):
+    feedback_storage.append(feedback)
+    response_message = f"Feedback received. Thank you, {feedback.name}!"
+    
+    return {"message": response_message}
+
+@app.get("/all-feedback")
+async def get_all_feedback():
+    return feedback_storage

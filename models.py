@@ -1,5 +1,5 @@
 from pydantic import BaseModel
 
-class User(BaseModel):
+class Feedback(BaseModel):
     name: str
-    age: int
+    message: str
