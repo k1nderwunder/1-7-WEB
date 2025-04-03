@@ -4,12 +4,14 @@ from models import User
 
 app = FastAPI()
 
-# Создаем экземпляр пользователя
-user = User(name="John Doe", id=1)
-
-@app.get("/users")
-def get_user():
-    return user
+@app.post("/user")
+def check_user_age(user: User):
+    is_adult = user.age >= 18
+    return {
+        "name": user.name,
+        "age": user.age,
+        "is_adult": is_adult
+    }
 
 class Numbers(BaseModel):
     num1: float
