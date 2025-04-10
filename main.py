@@ -1,22 +1,16 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
-from typing import List
+from pydantic import BaseModel, EmailStr, Field, field_validator
+from models import UserCreate
 
 app = FastAPI()
 
-class Feedback(BaseModel):
-    name: str
-    message: str
+users_storage = []
 
-feedback_storage: List[Feedback] = []
+@app.post("/create_user")
+async def create_user(user: UserCreate):
+    users_storage.append(user.dict())
+    return user
 
-@app.post("/feedback")
-async def post_feedback(feedback: Feedback):
-    feedback_storage.append(feedback)
-    response_message = f"Feedback received. Thank you, {feedback.name}!"
-    
-    return {"message": response_message}
-
-@app.get("/all-feedback")
-async def get_all_feedback():
-    return feedback_storage
+@app.get("/users")
+async def get_all_users():
+    return users_storage
